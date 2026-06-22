@@ -390,7 +390,7 @@ export default function Home() {
       }
     } catch (error) {
       setFormStatus('error')
-      setFormMessage('Erro ao enviar. Tente enviar direto para matheus@damodara.xyz')
+      setFormMessage('Erro ao enviar. Tente enviar direto para contato@amathyzin.com.br')
     }
   }
 
@@ -1178,7 +1178,7 @@ export default function Home() {
             <div className="space-y-2">
               <p className="text-muted-foreground text-sm uppercase tracking-wider">Contato Direto</p>
               <Link 
-                href="mailto:matheus@damodara.xyz?subject=Ol%C3%A1!%20Vi%20seu%20portfolio" 
+                href="mailto:contato@amathyzin.com.br?subject=Ol%C3%A1!%20Vi%20seu%20portfolio" 
                 className="text-xl md:text-2xl hover:text-accent transition-colors text-foreground"
                 onClick={() => {
                   if (typeof window !== 'undefined' && (window as any).va) {
@@ -1186,7 +1186,7 @@ export default function Home() {
                   }
                 }}
               >
-                matheus@damodara.xyz
+                contato@amathyzin.com.br
               </Link>
             </div>
             <div className="space-y-2">
