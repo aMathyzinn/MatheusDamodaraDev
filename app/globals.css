@@ -1,0 +1,281 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.08 0.01 280);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.13 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.13 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.13 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(0.65 0.24 250);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.25 0 0);
+  --input: oklch(0.25 0 0);
+  --ring: oklch(0.65 0.24 250);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.13 0 0);
+  --sidebar-foreground: oklch(0.97 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.22 0 0);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
+  --sidebar-border: oklch(0.25 0 0);
+  --sidebar-ring: oklch(0.45 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.65 0.24 250);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.65 0.24 250);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), 'Geist', sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    /* Simple black cursor */
+    cursor: default;
+  }
+
+  /* Lenis smooth scrolling base rules */
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.15 0.08 330 / 0.15), transparent),
+      radial-gradient(circle at 80% 80%, oklch(0.12 0.05 280 / 0.1), transparent),
+      oklch(0.08 0.01 280);
+    background-attachment: fixed;
+  }
+  
+  /* Subtle grain texture for premium feel */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  
+  main {
+    position: relative;
+    z-index: 2;
+  }
+  /* Black pointer for interactive elements */
+  a, button, [role="button"] {
+    cursor: pointer;
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Bouncing ball over hero name  ·  pure CSS, zero JS
+   ──────────────────────────────────────────────────────────────
+   "Matheus Damodara" = 16 chars.  Font = font-mono (Geist Mono).
+   Monospace advance ≈ 0.605 em per glyph (including the space).
+   The wrapper div carries the same font-size classes as the h1,
+   so 1em here = h1 font size → all sizing is proportional.
+
+   X travel: steps(16, end) over 16 × 220 ms = 3 520 ms
+     · from: center of char 0  = 0.5/16 × 100% = 3.125%
+     · to  : center of char 0 shifted by 16 full chars = 103.125%
+       (the "to" value is never rendered because the loop resets)
+
+   Y bounce: continuous 220 ms arc with squash & stretch.
+   ──────────────────────────────────────────────────────────── */
+
+@keyframes hero-ball-x {
+  from { left: 3.125%;   }
+  to   { left: 103.125%; }
+}
+
+@keyframes hero-ball-y {
+  /* ground — squash (wide & flat, transform-origin: center bottom) */
+  0%   { transform: translateX(-50%) scaleX(1.4) scaleY(0.55); animation-timing-function: cubic-bezier(0.33, 0, 0.55, 1); }
+  /* leaving ground — unscquash fast */
+  12%  { transform: translateX(-50%) translateY(-0.18em) scaleX(0.85) scaleY(1.2); animation-timing-function: ease-out; }
+  /* apex — round, free-fall begins */
+  50%  { transform: translateX(-50%) translateY(-1.4em) scaleX(1) scaleY(1); animation-timing-function: ease-in; }
+  /* coming down — re-stretch slightly */
+  88%  { transform: translateX(-50%) translateY(-0.18em) scaleX(0.85) scaleY(1.2); animation-timing-function: cubic-bezier(0.33, 0, 0.55, 1); }
+  /* ground — squash again */
+  100% { transform: translateX(-50%) scaleX(1.4) scaleY(0.55); }
+}
+
+/* Shadow on top of the h1 that grows/shrinks inversely with ball height */
+@keyframes hero-ball-shadow {
+  0%, 100% { transform: translateX(-50%) scaleX(1.6); opacity: 0.5; }
+  12%, 88% { transform: translateX(-50%) scaleX(1.2); opacity: 0.4; }
+  50%       { transform: translateX(-50%) scaleX(0.5); opacity: 0.15; }
+}
+
+.hero-ball {
+  /* geometry */
+  display: block;
+  position: absolute;
+  bottom: 100%;           /* sits just above the h1 block */
+  margin-bottom: 0.1em;   /* tiny gap between ball bottom and h1 top */
+  width:  0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  /* visual */
+  background: var(--accent);
+  box-shadow:
+    0 0 0.15em 0.06em var(--accent),
+    0 0 0.4em  0.1em  var(--accent);
+  pointer-events: none;
+  z-index: 20;
+  /* transform-origin at bottom so squash/stretch anchors correctly */
+  transform-origin: center bottom;
+  /* dual animation: X steps + continuous Y bounce */
+  animation:
+    hero-ball-x 3520ms steps(16, end) infinite,
+    hero-ball-y 220ms linear infinite;
+}
+
+/* Landing shadow — second pseudo-element using an extra span  */
+.hero-ball-shadow {
+  display: block;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 0.04em;
+  width: 0.42em;
+  height: 0.07em;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  filter: blur(0.05em);
+  pointer-events: none;
+  z-index: 19;
+  transform-origin: center bottom;
+  animation:
+    hero-ball-x 3520ms steps(16, end) infinite,
+    hero-ball-shadow 220ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ball,
+  .hero-ball-shadow {
+    animation: none !important;
+  }
+}
