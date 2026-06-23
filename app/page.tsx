@@ -134,8 +134,16 @@ export default function Home() {
       setHeroHeight(window.innerHeight)
       setIsMobile(window.innerWidth < 768)
     }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    let resizeTimer: NodeJS.Timeout
+    const debouncedResize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(handleResize, 150)
+    }
+    window.addEventListener('resize', debouncedResize)
+    return () => {
+      window.removeEventListener('resize', debouncedResize)
+      clearTimeout(resizeTimer)
+    }
   }, [])
 
   const measureRef = useRef<HTMLHeadingElement>(null)
@@ -216,11 +224,21 @@ export default function Home() {
     const timer = setTimeout(() => {
       if (isMounted) measure()
     }, 500)
-    window.addEventListener('resize', measure)
+    
+    let resizeTimer: NodeJS.Timeout
+    const debouncedMeasure = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        if (isMounted) measure()
+      }, 150)
+    }
+    window.addEventListener('resize', debouncedMeasure)
+    
     return () => {
       isMounted = false
-      window.removeEventListener('resize', measure)
+      window.removeEventListener('resize', debouncedMeasure)
       clearTimeout(timer)
+      clearTimeout(resizeTimer)
     }
   }, [])
 
@@ -308,10 +326,18 @@ export default function Home() {
     }
     // Measure after layout stabilizes
     const timer = setTimeout(measure, 300)
-    window.addEventListener('resize', measure)
+    
+    let resizeTimer: NodeJS.Timeout
+    const debouncedMeasure = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(measure, 150)
+    }
+    window.addEventListener('resize', debouncedMeasure)
+    
     return () => {
       clearTimeout(timer)
-      window.removeEventListener('resize', measure)
+      clearTimeout(resizeTimer)
+      window.removeEventListener('resize', debouncedMeasure)
     }
   }, [])
 
