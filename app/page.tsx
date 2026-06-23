@@ -99,6 +99,7 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false)
   const [portfolioOffsetY, setPortfolioOffsetY] = useState(0)
   const portfolioRef = useRef<HTMLDivElement>(null)
+  const sectionTopsRef = useRef({ portfolio: 0, services: 0, contact: 0 })
   
   const [heroMouse, setHeroMouse] = useState({ x: 50, y: 50, isHovering: false })
   const heroImageRef = useRef<HTMLDivElement>(null)
@@ -233,17 +234,14 @@ export default function Home() {
       setShowScrollTop(currentScroll > 1000)
 
       const vh = window.innerHeight
-      const portfolioEl = document.getElementById('portfolio')
-      const servicesEl = document.getElementById('services')
-      const contactEl = document.getElementById('contact')
       
       const tops = [
         0,
         vh * 0.5,
         vh * 1.5,
-        portfolioEl ? portfolioEl.offsetTop - vh * 0.5 : vh * 2.5,
-        servicesEl ? servicesEl.offsetTop - vh * 0.5 : vh * 3.5,
-        contactEl ? contactEl.offsetTop - vh * 0.5 : vh * 4.5
+        sectionTopsRef.current.portfolio ? sectionTopsRef.current.portfolio - vh * 0.5 : vh * 2.5,
+        sectionTopsRef.current.services ? sectionTopsRef.current.services - vh * 0.5 : vh * 3.5,
+        sectionTopsRef.current.contact ? sectionTopsRef.current.contact - vh * 0.5 : vh * 4.5
       ]
 
       let progress = 5 // default to last
@@ -301,6 +299,11 @@ export default function Home() {
     const measure = () => {
       if (portfolioRef.current) {
         setPortfolioOffsetY(portfolioRef.current.getBoundingClientRect().top + window.scrollY)
+      }
+      sectionTopsRef.current = {
+        portfolio: document.getElementById('portfolio')?.offsetTop || 0,
+        services: document.getElementById('services')?.offsetTop || 0,
+        contact: document.getElementById('contact')?.offsetTop || 0
       }
     }
     // Measure after layout stabilizes
