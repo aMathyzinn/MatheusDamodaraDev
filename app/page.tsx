@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, MotionConfig } from 'framer-motion'
+import { User } from 'lucide-react'
+import { Turnstile } from '@marsidev/react-turnstile'
 
 const skills = [
-  { category: 'Linguagens', items: ['Node.js', 'Python', 'TypeScript', 'JavaScript', 'Go', 'C#', 'C++', 'PHP', 'Bash/Shell'] },
+  { category: 'Linguagens', items: ['Node.js', 'Python', 'Rust', 'TypeScript', 'JavaScript', 'Go', 'C#', 'C++', 'PHP', 'Bash/Shell'] },
   { category: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS', 'HTML5', 'CSS3', 'Figma'] },
   { category: 'Backend', items: ['Express', 'FastAPI', 'NestJS', 'PHP', 'GraphQL', 'REST APIs', 'WebSockets'] },
   { category: 'Banco de Dados', items: ['PostgreSQL', 'MongoDB', 'Redis', 'MySQL', 'Prisma', 'Drizzle ORM'] },
@@ -27,7 +29,7 @@ const projects = [
     colSpan: 'lg:col-span-4',
     aspect: 'aspect-[3/4]',
     liveUrl: 'https://amathyzin.com.br',
-    githubUrl: '#',
+    githubUrl: '',
   },
   {
     title: 'VarejoCode',
@@ -39,7 +41,7 @@ const projects = [
     colSpan: 'lg:col-span-4',
     aspect: 'aspect-[3/4]',
     liveUrl: 'https://varejocode.com.br',
-    githubUrl: '#',
+    githubUrl: 'https://github.com/aMathyzinn/VarejoCode',
   },
   {
     title: 'VarejoVendas',
@@ -50,8 +52,9 @@ const projects = [
     color: '#22c55e',
     colSpan: 'lg:col-span-4',
     aspect: 'aspect-[3/4]',
-    liveUrl: 'https://vendas.varejocode.com.br',
-    githubUrl: '#',
+    liveUrl: '#',
+    githubUrl: '',
+    status: 'offline'
   },
   {
     title: 'Minimal Optimizer',
@@ -62,7 +65,7 @@ const projects = [
     color: '#ef4444',
     colSpan: 'lg:col-span-5',
     aspect: 'aspect-[3/5]',
-    liveUrl: 'https://github.com/aMathyzinn/Minimal-Optimizer-2',
+    liveUrl: 'https://amathyzin.com.br/pt-BR/blog/minimal-optimizer-20-o-melhor-otimizador-gratuito-para-windows-em-2026/',
     githubUrl: 'https://github.com/aMathyzinn/Minimal-Optimizer-2',
   },
   {
@@ -74,8 +77,8 @@ const projects = [
     color: '#10b981',
     colSpan: 'lg:col-span-7',
     aspect: 'aspect-[4/5]',
-    liveUrl: '#',
-    githubUrl: '#',
+    liveUrl: 'https://github.com/aMathyzinn/OrganicCord/releases/tag/v0.1.0',
+    githubUrl: 'https://github.com/aMathyzinn/OrganicCord',
   },
 ]
 
@@ -92,6 +95,7 @@ export default function Home() {
   })
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [formMessage, setFormMessage] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
   const [navProgress, setNavProgress] = useState(0)
@@ -99,7 +103,7 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false)
   const [portfolioOffsetY, setPortfolioOffsetY] = useState(0)
   const portfolioRef = useRef<HTMLDivElement>(null)
-  const sectionTopsRef = useRef({ portfolio: 0, services: 0, contact: 0 })
+  const sectionTopsRef = useRef({ portfolio: 0, skills: 0, testimonials: 0, services: 0, contact: 0 })
   
   const spotlightRef = useRef<HTMLDivElement>(null)
   const heroImageRef = useRef<HTMLDivElement>(null)
@@ -111,7 +115,7 @@ export default function Home() {
     const y = ((e.clientY - rect.top) / rect.height) * 100
     spotlightRef.current.style.opacity = '1'
     spotlightRef.current.style.maskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
-    spotlightRef.current.style.WebkitMaskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
+    spotlightRef.current.style.webkitMaskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
   }
 
   const handleHeroTouchMove = (e: React.TouchEvent) => {
@@ -122,7 +126,7 @@ export default function Home() {
     const y = ((touch.clientY - rect.top) / rect.height) * 100
     spotlightRef.current.style.opacity = '1'
     spotlightRef.current.style.maskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
-    spotlightRef.current.style.WebkitMaskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
+    spotlightRef.current.style.webkitMaskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
   }
   
   const handleHeroMouseLeave = () => {
@@ -260,8 +264,8 @@ export default function Home() {
       const tops = [
         0,
         vh * 0.5,
-        vh * 1.5,
-        sectionTopsRef.current.portfolio ? sectionTopsRef.current.portfolio - vh * 0.5 : vh * 2.5,
+        sectionTopsRef.current.portfolio ? sectionTopsRef.current.portfolio - vh * 0.5 : vh * 1.5,
+        sectionTopsRef.current.skills ? sectionTopsRef.current.skills - vh * 0.5 : vh * 2.5,
         sectionTopsRef.current.services ? sectionTopsRef.current.services - vh * 0.5 : vh * 3.5,
         sectionTopsRef.current.contact ? sectionTopsRef.current.contact - vh * 0.5 : vh * 4.5
       ]
@@ -295,8 +299,8 @@ export default function Home() {
       let currentSection = '#home'
       if (progress < 0.5) currentSection = '#home'
       else if (progress < 1.5) currentSection = '#me'
-      else if (progress < 2.5) currentSection = '#skills'
-      else if (progress < 3.5) currentSection = '#portfolio'
+      else if (progress < 2.5) currentSection = '#portfolio'
+      else if (progress < 3.5) currentSection = '#skills'
       else if (progress < 4.5) currentSection = '#services'
       else currentSection = '#contact'
       
@@ -324,6 +328,8 @@ export default function Home() {
       }
       sectionTopsRef.current = {
         portfolio: document.getElementById('portfolio')?.offsetTop || 0,
+        skills: document.getElementById('skills')?.offsetTop || 0,
+        testimonials: document.getElementById('testimonials')?.offsetTop || 0,
         services: document.getElementById('services')?.offsetTop || 0,
         contact: document.getElementById('contact')?.offsetTop || 0
       }
@@ -407,7 +413,7 @@ export default function Home() {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       })
       
       if (response.ok) {
@@ -452,7 +458,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       {/* Logo */}
-      <div className="fixed top-6 left-6 md:top-8 md:left-8 lg:left-12 z-[9999] pointer-events-none transition-all duration-500">
+      <div className={`fixed top-6 left-6 md:top-8 md:left-8 lg:left-12 pointer-events-none transition-all duration-500 ${activeSection === '#portfolio' ? 'z-[10]' : 'z-[9999]'}`}>
         <div className="relative w-12 h-12 md:w-14 md:h-14 overflow-hidden rounded-xl bg-background/50 backdrop-blur-md shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center">
           <Image src="/logo.png" alt="Damodara Dev Logo" width={32} height={32} className="object-contain drop-shadow-md" />
         </div>
@@ -492,7 +498,6 @@ export default function Home() {
                   className="relative w-full h-full overflow-hidden"
                   onMouseMove={handleHeroMouseMove}
                   onMouseLeave={handleHeroMouseLeave}
-                  onMouseEnter={() => setHeroMouse(prev => ({ ...prev, isHovering: true }))}
                   onTouchStart={(e) => handleHeroTouchMove(e)}
                   onTouchMove={handleHeroTouchMove}
                   onTouchEnd={handleHeroMouseLeave}
@@ -560,8 +565,8 @@ export default function Home() {
                   {[
                     { href: '#home', label: 'Home' },
                     { href: '#me', label: 'Sobre' },
-                    { href: '#skills', label: 'Skills' },
                     { href: '#portfolio', label: 'Portfolio' },
+                    { href: '#skills', label: 'Skills' },
                     { href: '#services', label: 'Serviços' },
                     { href: '#contact', label: 'Contato' },
                   ].map(({ href, label }) => {
@@ -629,9 +634,9 @@ export default function Home() {
                         }}
                         transition={{
                           x: { duration: 19.2, ease: "linear", times: route.leftTimes, repeat: Infinity },
-                          y: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity },
-                          scaleX: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity },
-                          scaleY: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity }
+                          y: { duration: 19.2, ease: route.yEases as any, times: route.yTimes, repeat: Infinity },
+                          scaleX: { duration: 19.2, ease: route.yEases as any, times: route.yTimes, repeat: Infinity },
+                          scaleY: { duration: 19.2, ease: route.yEases as any, times: route.yTimes, repeat: Infinity }
                         }}
                       />
                       <motion.span
@@ -645,8 +650,8 @@ export default function Home() {
                         }}
                         transition={{
                           x: { duration: 19.2, ease: "linear", times: route.leftTimes, repeat: Infinity },
-                          scaleX: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity },
-                          opacity: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity }
+                          scaleX: { duration: 19.2, ease: route.yEases as any, times: route.yTimes, repeat: Infinity },
+                          opacity: { duration: 19.2, ease: route.yEases as any, times: route.yTimes, repeat: Infinity }
                         }}
                       />
                     </MotionConfig>
@@ -719,71 +724,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Skills Section */}
-      <section id="skills" className="min-h-screen relative py-16 md:py-20 lg:py-28 px-6 md:px-12 lg:px-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/[0.02] to-transparent pointer-events-none" />
-        <div className="max-w-7xl mx-auto">
-          <div
-            className="transition-all duration-700"
-            style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 400) / 300)),
-              transform: `translateY(${Math.max(0, 40 - (scrollY - 400) / 10)}px)`,
-            }}
-          >
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4">
-              Skills
-            </h2>
-            <p className="text-muted-foreground text-lg md:text-xl mb-16 md:mb-20 max-w-xl">
-              Tecnologias e ferramentas que uso para construir produtos completos.
-            </p>
-            
-            {/* Navigation for categories */}
-            <nav className="flex flex-wrap gap-2 mb-6" aria-label="Categorias de Skills" style={{pointerEvents: 'auto'}}>
-              {skills.map((group) => (
-                <button
-                  key={group.category}
-                  onClick={(e) => handleNavClick(e, `#${group.category.replace(/\s+/g, '-').toLowerCase()}`)}
-                  className="px-4 py-2 min-h-[44px] flex items-center justify-center text-sm font-medium text-foreground bg-background rounded hover:bg-accent/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                >
-                  {group.category}
-                </button>
-              ))}
-            </nav>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-              {skills.map((group, gi) => (
-                <div
-                  key={group.category}
-                  id={group.category.replace(/\s+/g, '-').toLowerCase()}
-                  className="space-y-4 group"
-                  style={{
-                    opacity: Math.min(1, Math.max(0, (scrollY - 500 - gi * 60) / 250)),
-                    transform: `translateY(${Math.max(0, 40 - (scrollY - 500 - gi * 60) / 8)}px)`,
-                  }}
-                >
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold border-b border-border pb-2">
-                    {group.category}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {group.items.map((skill) => (
-                      <span
-                        key={skill}
-                        className="text-sm px-3 py-1.5 min-h-[44px] flex items-center justify-center border border-border text-foreground hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-200 font-mono"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Portfolio Section — Sticky Scroll Cinematic Reveal */}
       <div id="portfolio" ref={portfolioRef} style={{ height: `${120 + projects.length * 100}vh` }} className="relative">
-        <div className="sticky top-0 h-screen overflow-hidden">
+        <div className="sticky top-0 h-screen overflow-hidden z-[50]">
           {/* Ambient glow */}
           <div className="absolute inset-0 bg-gradient-to-br from-accent/[0.04] via-transparent to-transparent pointer-events-none" />
 
@@ -793,7 +736,7 @@ export default function Home() {
             const headerProgress = Math.min(1, Math.max(0, (scrollY - portfolioStart) / 300))
             return (
               <div
-                className="absolute top-0 left-0 right-0 px-6 md:px-12 lg:px-16 pt-12 md:pt-16 z-20 pointer-events-none"
+                className="absolute top-0 left-0 right-0 px-6 md:px-12 lg:px-16 pt-12 md:pt-16 z-[100] pointer-events-none"
                 style={{
                   opacity: headerProgress,
                   transform: `translateY(${(1 - headerProgress) * 30}px)`,
@@ -885,43 +828,56 @@ export default function Home() {
                           </span>
                         ))}
                       </div>
-                      <div className="flex gap-4 pt-2">
-                        <Link
-                          href={project.liveUrl}
-                          className="text-sm font-bold border px-6 py-3 transition-all duration-200"
-                          style={{
-                            borderColor: project.color,
-                            color: project.color,
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = project.color;
-                            e.currentTarget.style.color = '#000000';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = project.color;
-                          }}
-                          onClick={(e) => {
-                            if (project.liveUrl === '#') e.preventDefault()
-                            if (typeof window !== 'undefined' && (window as any).va) {
-                              (window as any).va('track', 'Project Live Click', { project: project.title })
-                            }
-                          }}
-                        >
-                          Ver Projeto
-                        </Link>
-                        <Link
-                          href={project.githubUrl}
-                          className="text-sm font-bold border border-border text-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-all duration-200"
-                          onClick={(e) => {
-                            if (project.githubUrl === '#') e.preventDefault()
-                            if (typeof window !== 'undefined' && (window as any).va) {
-                              (window as any).va('track', 'Project GitHub Click', { project: project.title })
-                            }
-                          }}
-                        >
-                          Código
-                        </Link>
+                      <div className="flex flex-col gap-2 pt-2">
+                        <div className="flex gap-4">
+                          <Link
+                            href={project.liveUrl}
+                            target={project.status !== 'offline' && project.liveUrl !== '#' ? '_blank' : undefined}
+                            rel={project.status !== 'offline' && project.liveUrl !== '#' ? 'noopener noreferrer' : undefined}
+                            className={`text-sm font-bold border px-6 py-3 transition-all duration-200 flex items-center justify-center ${project.status === 'offline' ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                            style={{
+                              borderColor: project.color,
+                              color: project.color,
+                            }}
+                            onMouseEnter={(e) => {
+                              if (project.status === 'offline') return;
+                              e.currentTarget.style.backgroundColor = project.color;
+                              e.currentTarget.style.color = '#000000';
+                            }}
+                            onMouseLeave={(e) => {
+                              if (project.status === 'offline') return;
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = project.color;
+                            }}
+                            onClick={(e) => {
+                              if (project.liveUrl === '#' || project.status === 'offline') e.preventDefault()
+                              if (project.status !== 'offline' && typeof window !== 'undefined' && (window as any).va) {
+                                (window as any).va('track', 'Project Live Click', { project: project.title })
+                              }
+                            }}
+                          >
+                            {project.status === 'offline' ? 'Indisponível temporariamente' : 'Ver Projeto'}
+                          </Link>
+                          {project.githubUrl && (
+                            <Link
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm font-bold border border-border text-foreground px-6 py-3 hover:bg-foreground hover:text-background transition-all duration-200 flex items-center justify-center"
+                              onClick={(e) => {
+                                if (project.githubUrl === '#') e.preventDefault()
+                                if (typeof window !== 'undefined' && (window as any).va) {
+                                  (window as any).va('track', 'Project GitHub Click', { project: project.title })
+                                }
+                              }}
+                            >
+                              Código
+                            </Link>
+                          )}
+                        </div>
+                        {project.status === 'offline' && (
+                          <p className="text-xs text-muted-foreground mt-1">*Atualmente offline em reestruturação</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -962,15 +918,65 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Skills Section */}
+      <section id="skills" className="min-h-screen relative py-16 md:py-20 lg:py-28 px-6 md:px-12 lg:px-16">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/[0.02] to-transparent pointer-events-none" />
+        <div className="max-w-7xl mx-auto">
+          <div
+            className="transition-all duration-700"
+            style={{
+              opacity: sectionTopsRef.current.skills ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.skills - heroHeight * 0.8)) / 300)) : 0,
+              transform: sectionTopsRef.current.skills ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.skills - heroHeight * 0.8)) / 10)}px)` : 'translateY(40px)',
+            }}
+          >
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4">
+              A Engine por trás dos Resultados
+            </h2>
+            <p className="text-muted-foreground text-lg md:text-xl mb-16 md:mb-20 max-w-xl">
+              O que move esses projetos. Tecnologias e arquiteturas por trás dos bastidores.
+            </p>
+            
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+              {skills.map((group, gi) => (
+                <div
+                  key={group.category}
+                  id={group.category.replace(/\s+/g, '-').toLowerCase()}
+                  className="space-y-4 group"
+                  style={{
+                    opacity: sectionTopsRef.current.skills ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.skills - heroHeight * 0.7) - gi * 60) / 250)) : 0,
+                    transform: sectionTopsRef.current.skills ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.skills - heroHeight * 0.7) - gi * 60) / 8)}px)` : 'translateY(40px)',
+                  }}
+                >
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold border-b border-border pb-2">
+                    {group.category}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-sm px-3 py-1.5 min-h-[44px] flex items-center justify-center border border-border text-foreground hover:border-foreground hover:bg-foreground hover:text-background transition-all duration-200 font-mono"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
-      <section className="relative py-20 md:py-28 px-6 md:px-12 lg:px-16">
+      <section id="testimonials" className="relative py-20 md:py-28 px-6 md:px-12 lg:px-16">
         <div className="absolute inset-0 bg-gradient-to-t from-transparent via-accent/[0.015] to-transparent pointer-events-none" />
         <div className="max-w-6xl mx-auto">
           <div
             className="transition-all duration-700"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 2400) / 300)),
-              transform: `translateY(${Math.max(0, 40 - (scrollY - 2400) / 10)}px)`,
+              opacity: sectionTopsRef.current.testimonials ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.testimonials - heroHeight * 0.8)) / 300)) : 0,
+              transform: sectionTopsRef.current.testimonials ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.testimonials - heroHeight * 0.8)) / 10)}px)` : 'translateY(40px)',
             }}
           >
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-16 md:mb-20">
@@ -979,40 +985,78 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               {[
                 {
-                  quote: "Matheus entregou nossa plataforma SaaS em tempo recorde. A arquitetura que ele construiu está rodando sem problemas há 8 meses, suportando picos de 5k usuários simultâneos.",
-                  author: "Carlos Silva",
-                  role: "CTO, TechStartup",
+                  quote: "InfoClass é top demais, cara. Interface limpa e funciona que é uma beleza. Exatamente o que eu precisava pra apresentar",
+                  author: "@willian08",
+                  role: "App organizador de vida escolar",
+                  viaDiscord: true,
+                  projectImage: "/images/projects/infoclass.webp",
+                  color: "bg-blue-500/20 text-blue-500"
                 },
                 {
-                  quote: "Precisávamos de alguém que entendesse tanto de código quanto de infraestrutura. Matheus automatizou todo nosso pipeline de deploy e reduziu nosso tempo de release de dias para minutos.",
-                  author: "Ana Costa",
-                  role: "Founder, DataFlow",
+                  quote: "A VarejoCode salvou meu projeto final. Em 10 min tinha orçamento e o app veio completamente funcional: tarefas, calendário e responsivo. Código super organizado e design moderno. Resultado profissional e preço justo, recomendo de olhos fechados!",
+                  author: "@helena_ggplus",
+                  role: "Study Hobby",
+                  viaDiscord: true,
+                  projectImage: "/images/projects/StudyHobby.webp",
+                  color: "bg-purple-500/20 text-purple-500"
                 },
                 {
-                  quote: "A API que ele desenvolveu processa 50k requisições por minuto sem engasgar. Performance impecável e código limpo que qualquer dev consegue manter.",
-                  author: "Roberto Mendes",
-                  role: "Tech Lead, FinanceApp",
+                  quote: "Man, nao esperava que ia ficar tão bom! Painel admin completo em 2 dias, agora gerencio todos os usuários do meu app super fácil. Design ficou profissional demais e o preço foi muito justo. Valeu muito a pena! ⭐⭐⭐⭐⭐",
+                  author: "@01duu",
+                  role: "Sistema de gerenciamento de logins (YZHY)",
+                  viaDiscord: true,
+                  projectImage: "/images/projects/yzhy.webp",
+                  color: "bg-emerald-500/20 text-emerald-500"
                 },
                 {
-                  quote: "Contratei o Matheus para uma consultoria de 2 semanas. Ele identificou gargalos que estavam custando R$ 15k/mês em infraestrutura desnecessária. ROI imediato.",
-                  author: "Julia Ferreira",
-                  role: "CEO, E-commerce Plus",
-                },
+                  quote: "Eu não sei muito como explicar, mas o trabalho ficou simplesmente perfeito. Pedi um site de portfólio para mostrar meus designs e a VarejoCode entregou algo muito além do que eu imaginava. O site é moderno, rápido, totalmente responsivo e deixou meu trabalho muito mais profissional. Foi tudo ágil, sem enrolação, e o resultado ficou lindo. Recomendo de verdade!!!",
+                  author: "@myriam_whitte_07820",
+                  role: "Myriam Designer Portfolio",
+                  viaDiscord: true,
+                  projectImage: "/images/projects/myriam.webp",
+                  color: "bg-rose-500/20 text-rose-500"
+                }
               ].map((testimonial, i) => (
                 <div
                   key={i}
-                  className="border-l-2 border-accent pl-6 md:pl-8 space-y-4"
+                  className="group flex flex-col h-full"
                   style={{
-                    opacity: Math.min(1, Math.max(0, (scrollY - 2500 - i * 100) / 300)),
-                    transform: `translateY(${Math.max(0, 40 - (scrollY - 2500 - i * 100) / 8)}px)`,
+                    opacity: sectionTopsRef.current.testimonials ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.testimonials - heroHeight * 0.7) - i * 100) / 300)) : 0,
+                    transform: sectionTopsRef.current.testimonials ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.testimonials - heroHeight * 0.7) - i * 100) / 8)}px)` : 'translateY(40px)',
                   }}
                 >
-                  <p className="text-base md:text-lg text-muted-foreground leading-relaxed italic">
-                    "{testimonial.quote}"
-                  </p>
-                  <div>
-                    <p className="text-foreground font-semibold">{testimonial.author}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden border border-white/5 bg-accent/5 mb-6 shrink-0">
+                    {testimonial.projectImage && (
+                      <Image 
+                        src={testimonial.projectImage} 
+                        alt="Project screenshot" 
+                        fill 
+                        className="object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500 hover:scale-105" 
+                      />
+                    )}
+                  </div>
+                  
+                  <div className="border-l-2 border-accent pl-6 md:pl-8 flex flex-col grow">
+                    <p className="text-base md:text-lg text-muted-foreground leading-relaxed italic grow mb-6">
+                      "{testimonial.quote}"
+                    </p>
+                    <div className="flex items-center gap-4 mt-auto">
+                      <div className={`relative w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0 flex items-center justify-center ${testimonial.color}`}>
+                        <User className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-foreground font-semibold">{testimonial.author}</p>
+                          {testimonial.viaDiscord && (
+                            <span className="text-[10px] uppercase tracking-wider font-bold text-[#5865F2] bg-[#5865F2]/10 px-2 py-0.5 rounded flex items-center gap-1 shrink-0">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+                              Discord
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-1">{testimonial.role}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1027,8 +1071,8 @@ export default function Home() {
           <h2
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 text-foreground"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 3000) / 400)),
-              transform: `translateY(${Math.max(0, 40 - (scrollY - 3000) / 12)}px)`,
+              opacity: sectionTopsRef.current.services ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.services - heroHeight * 0.8)) / 400)) : 0,
+              transform: sectionTopsRef.current.services ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.services - heroHeight * 0.8)) / 12)}px)` : 'translateY(40px)',
             }}
           >
             Serviços
@@ -1036,7 +1080,7 @@ export default function Home() {
           <p
             className="text-muted-foreground text-lg md:text-xl mb-16 md:mb-24 max-w-xl"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 3050) / 300)),
+              opacity: sectionTopsRef.current.services ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.services - heroHeight * 0.75)) / 300)) : 0,
             }}
           >
             O que posso entregar para o seu produto ou negócio.
@@ -1079,8 +1123,8 @@ export default function Home() {
                 key={svc.n}
                 className="space-y-4 group border-t border-border pt-6"
                 style={{
-                  opacity: Math.min(1, Math.max(0, (scrollY - 3200 - i * 100) / 300)),
-                  transform: `translateY(${Math.max(0, 50 - (scrollY - 3200 - i * 100) / 8)}px)`,
+                  opacity: sectionTopsRef.current.services ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.services - heroHeight * 0.6) - i * 100) / 300)) : 0,
+                  transform: sectionTopsRef.current.services ? `translateY(${Math.max(0, 50 - (scrollY - (sectionTopsRef.current.services - heroHeight * 0.6) - i * 100) / 8)}px)` : 'translateY(50px)',
                 }}
               >
                 <div className="text-5xl md:text-6xl font-bold text-muted-foreground/30 group-hover:text-foreground transition-colors duration-300 font-mono">
@@ -1100,8 +1144,8 @@ export default function Home() {
           <h2
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 md:mb-12 text-foreground"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 4200) / 400)),
-              transform: `translateY(${Math.max(0, 40 - (scrollY - 4200) / 12)}px)`,
+              opacity: sectionTopsRef.current.contact ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.8)) / 400)) : 0,
+              transform: sectionTopsRef.current.contact ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.8)) / 12)}px)` : 'translateY(40px)',
             }}
           >
             Vamos conversar
@@ -1110,8 +1154,8 @@ export default function Home() {
           <p
             className="text-lg md:text-xl text-muted-foreground mb-12 md:mb-16 max-w-2xl"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 4300) / 300)),
-              transform: `translateY(${Math.max(0, 30 - (scrollY - 4300) / 10)}px)`,
+              opacity: sectionTopsRef.current.contact ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.7)) / 300)) : 0,
+              transform: sectionTopsRef.current.contact ? `translateY(${Math.max(0, 30 - (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.7)) / 10)}px)` : 'translateY(30px)',
             }}
           >
             Tem um projeto em mente? Vamos colaborar e construir algo incrível juntos.
@@ -1121,8 +1165,8 @@ export default function Home() {
             onSubmit={handleSubmit}
             className="space-y-8"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 4400) / 300)),
-              transform: `translateY(${Math.max(0, 40 - (scrollY - 4400) / 10)}px)`,
+              opacity: sectionTopsRef.current.contact ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.6)) / 300)) : 0,
+              transform: sectionTopsRef.current.contact ? `translateY(${Math.max(0, 40 - (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.6)) / 10)}px)` : 'translateY(40px)',
             }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1182,6 +1226,13 @@ export default function Home() {
                 {formMessage}
               </div>
             )}
+            <div className="pt-4">
+              <Turnstile 
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} 
+                onSuccess={(token) => setTurnstileToken(token)}
+                options={{ theme: 'dark' }}
+              />
+            </div>
             <div className="pt-8">
               <button
                 type="submit"
@@ -1204,7 +1255,7 @@ export default function Home() {
           <div
             className="mt-16 md:mt-20 pt-12 border-t border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollY - 4600) / 300)),
+              opacity: sectionTopsRef.current.contact ? Math.min(1, Math.max(0, (scrollY - (sectionTopsRef.current.contact - heroHeight * 0.4)) / 300)) : 0,
             }}
           >
             <div className="space-y-2">
