@@ -783,20 +783,6 @@ export default function Home() {
 
       {/* Portfolio Section — Sticky Scroll Cinematic Reveal */}
       <div id="portfolio" ref={portfolioRef} style={{ height: `${120 + projects.length * 100}vh` }} className="relative">
-        {/* Invisible snap markers for each project */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          {projects.map((_, i) => (
-            <div 
-              key={`snap-${i}`}
-              className="absolute w-full snap-center"
-              style={{
-                top: `calc(300px + ${(i + 0.5) * 100}vh)`,
-                height: '1px'
-              }}
-            />
-          ))}
-        </div>
-
         <div className="sticky top-0 h-screen overflow-hidden">
           {/* Ambient glow */}
           <div className="absolute inset-0 bg-gradient-to-br from-accent/[0.04] via-transparent to-transparent pointer-events-none" />
@@ -832,8 +818,8 @@ export default function Home() {
               const enter = portfolioStart + 300 + i * scrollPerProject
               const exit = enter + scrollPerProject
 
-              const enterP = Math.min(1, Math.max(0, (scrollY - enter) / (scrollPerProject * 0.2)))
-              const exitP = Math.min(1, Math.max(0, (scrollY - exit + scrollPerProject * 0.2) / (scrollPerProject * 0.2)))
+              const enterP = Math.min(1, Math.max(0, (scrollY - enter) / (scrollPerProject * 0.4)))
+              const exitP = Math.min(1, Math.max(0, (scrollY - exit + scrollPerProject * 0.3) / (scrollPerProject * 0.3)))
 
               const opacity = enterP * (1 - exitP)
               const translateX = (1 - enterP) * (i % 2 === 0 ? 100 : -100) + exitP * (i % 2 === 0 ? -60 : 60)
