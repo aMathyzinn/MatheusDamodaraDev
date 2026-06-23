@@ -101,28 +101,32 @@ export default function Home() {
   const portfolioRef = useRef<HTMLDivElement>(null)
   const sectionTopsRef = useRef({ portfolio: 0, services: 0, contact: 0 })
   
-  const [heroMouse, setHeroMouse] = useState({ x: 50, y: 50, isHovering: false })
+  const spotlightRef = useRef<HTMLDivElement>(null)
   const heroImageRef = useRef<HTMLDivElement>(null)
 
   const handleHeroMouseMove = (e: React.MouseEvent) => {
-    if (!heroImageRef.current) return
+    if (!heroImageRef.current || !spotlightRef.current) return
     const rect = heroImageRef.current.getBoundingClientRect()
     const x = ((e.clientX - rect.left) / rect.width) * 100
     const y = ((e.clientY - rect.top) / rect.height) * 100
-    setHeroMouse({ x, y, isHovering: true })
+    spotlightRef.current.style.opacity = '1'
+    spotlightRef.current.style.maskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
+    spotlightRef.current.style.WebkitMaskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
   }
 
   const handleHeroTouchMove = (e: React.TouchEvent) => {
-    if (!heroImageRef.current || e.touches.length === 0) return
+    if (!heroImageRef.current || e.touches.length === 0 || !spotlightRef.current) return
     const touch = e.touches[0]
     const rect = heroImageRef.current.getBoundingClientRect()
     const x = ((touch.clientX - rect.left) / rect.width) * 100
     const y = ((touch.clientY - rect.top) / rect.height) * 100
-    setHeroMouse({ x, y, isHovering: true })
+    spotlightRef.current.style.opacity = '1'
+    spotlightRef.current.style.maskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
+    spotlightRef.current.style.WebkitMaskImage = `radial-gradient(200px circle at ${x}% ${y}%, black 0%, transparent 100%)`
   }
   
   const handleHeroMouseLeave = () => {
-    setHeroMouse(prev => ({ ...prev, isHovering: false }))
+    if (spotlightRef.current) spotlightRef.current.style.opacity = '0'
   }
 
   useEffect(() => {
@@ -148,7 +152,7 @@ export default function Home() {
 
   const measureRef = useRef<HTMLHeadingElement>(null)
   const [route, setRoute] = useState<{
-    left: string[], y: string[], leftTimes: number[], yTimes: number[], yEases: string[],
+    xPaths: number[], y: string[], leftTimes: number[], yTimes: number[], yEases: string[],
     scaleX: number[], scaleY: number[], shadowScale: number[], shadowOpacity: number[]
   } | null>(null)
 
@@ -162,10 +166,10 @@ export default function Home() {
       const c: number[] = []
       spans.forEach(s => {
         const centerPx = s.offsetLeft + s.offsetWidth / 2
-        c.push((centerPx / containerWidth) * 100)
+        c.push(centerPx)
       })
 
-      const left: string[] = []
+      const xPaths: number[] = []
       const y: string[] = []
       const leftTimes: number[] = []
       const yTimes: number[] = []
@@ -177,7 +181,7 @@ export default function Home() {
       const shadowOpacity: number[] = []
 
       for (let i = 0; i < 16; i++) {
-        left.push(`${c[i]}%`)
+        xPaths.push(c[i])
         leftTimes.push(i / 16)
 
         // Ground state (takeoff)
@@ -200,7 +204,7 @@ export default function Home() {
       }
 
       // Final landing
-      left.push(`${c[0] + 100}%`)
+      xPaths.push(c[0] + containerWidth)
       leftTimes.push(1)
 
       y.push("0em")
@@ -211,7 +215,7 @@ export default function Home() {
       shadowScale.push(1.6)
       shadowOpacity.push(0.5)
 
-      setRoute({ left, y, leftTimes, yTimes, yEases, scaleX, scaleY, shadowScale, shadowOpacity })
+      setRoute({ xPaths, y, leftTimes, yTimes, yEases, scaleX, scaleY, shadowScale, shadowOpacity })
     }
 
     measure()
@@ -506,11 +510,10 @@ export default function Home() {
 
                   {/* Grayscale Spotlight */}
                   <div 
+                    ref={spotlightRef}
                     className="absolute inset-0 transition-opacity duration-700 ease-out pointer-events-none"
                     style={{
-                      opacity: heroMouse.isHovering ? 1 : 0,
-                      maskImage: `radial-gradient(200px circle at ${heroMouse.x}% ${heroMouse.y}%, black 0%, transparent 100%)`,
-                      WebkitMaskImage: `radial-gradient(200px circle at ${heroMouse.x}% ${heroMouse.y}%, black 0%, transparent 100%)`
+                      opacity: 0,
                     }}
                   >
                     <Image
@@ -617,15 +620,15 @@ export default function Home() {
                       <motion.span
                         aria-hidden="true"
                         className="absolute bottom-full mb-[0.1em] w-[0.42em] h-[0.42em] rounded-full bg-accent z-20 pointer-events-none"
-                        style={{ boxShadow: '0 0 0.15em 0.06em var(--accent), 0 0 0.5em 0.15em var(--accent)', transformOrigin: 'center bottom', x: '-50%' }}
+                        style={{ boxShadow: '0 0 0.15em 0.06em var(--accent), 0 0 0.5em 0.15em var(--accent)', transformOrigin: 'center bottom', left: 0, marginLeft: '-0.21em' }}
                         animate={{
-                          left: route.left,
+                          x: route.xPaths,
                           y: route.y,
                           scaleX: route.scaleX,
                           scaleY: route.scaleY
                         }}
                         transition={{
-                          left: { duration: 19.2, ease: "linear", times: route.leftTimes, repeat: Infinity },
+                          x: { duration: 19.2, ease: "linear", times: route.leftTimes, repeat: Infinity },
                           y: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity },
                           scaleX: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity },
                           scaleY: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity }
@@ -634,14 +637,14 @@ export default function Home() {
                       <motion.span
                         aria-hidden="true"
                         className="absolute bottom-full mb-[0.04em] w-[0.42em] h-[0.07em] rounded-full bg-accent blur-[0.05em] z-19 pointer-events-none"
-                        style={{ transformOrigin: 'center center', x: '-50%' }}
+                        style={{ transformOrigin: 'center center', left: 0, marginLeft: '-0.21em' }}
                         animate={{
-                          left: route.left,
+                          x: route.xPaths,
                           scaleX: route.shadowScale,
                           opacity: route.shadowOpacity
                         }}
                         transition={{
-                          left: { duration: 19.2, ease: "linear", times: route.leftTimes, repeat: Infinity },
+                          x: { duration: 19.2, ease: "linear", times: route.leftTimes, repeat: Infinity },
                           scaleX: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity },
                           opacity: { duration: 19.2, ease: route.yEases, times: route.yTimes, repeat: Infinity }
                         }}
