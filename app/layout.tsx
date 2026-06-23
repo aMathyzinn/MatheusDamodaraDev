@@ -14,12 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Matheus Damodara - Full-Stack Developer & DevOps Engineer',
-  description: 'Desenvolvedor full-stack especializado em sistemas escaláveis, APIs robustas e infraestrutura cloud. Construo produtos do código à produção.',
+  title: 'Matheus Damodara',
+  description: 'Full-Stack Developer & DevOps Engineer. Building scalable applications, infrastructure and developer tools.',
   keywords: ['Full-Stack Developer', 'DevOps', 'Node.js', 'React', 'Next.js', 'AWS', 'Kubernetes', 'Freelance Developer', 'Consultoria Tech'],
   authors: [{ name: 'Matheus Damodara' }],
   creator: 'Matheus Damodara',
   manifest: '/site.webmanifest',
+  metadataBase: new URL('https://damodara.xyz'),
   alternates: {
     canonical: 'https://damodara.xyz',
   },
@@ -27,23 +28,23 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     url: 'https://damodara.xyz',
-    title: 'Matheus Damodara - Full-Stack Developer & DevOps',
-    description: 'Desenvolvedor full-stack especializado em sistemas escaláveis, APIs robustas e infraestrutura cloud.',
-    siteName: 'Matheus Damodara Portfolio',
+    title: 'Matheus Damodara',
+    description: 'Full-Stack Developer & DevOps Engineer. Building scalable applications, infrastructure and developer tools.',
+    siteName: 'Matheus Damodara',
     images: [
       {
-        url: '/images/matheusdamodara.webp',
+        url: '/og/og.png',
         width: 1200,
         height: 630,
-        alt: 'Matheus Damodara - Full-Stack Developer',
+        alt: 'Matheus Damodara - Portfolio',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Matheus Damodara - Full-Stack Developer & DevOps',
-    description: 'Desenvolvedor full-stack especializado em sistemas escaláveis e infraestrutura cloud.',
-    images: ['/images/matheusdamodara.webp'],
+    title: 'Matheus Damodara',
+    description: 'Full-Stack Developer & DevOps Engineer. Building scalable applications, infrastructure and developer tools.',
+    images: ['/og/og.png'],
   },
   icons: {
     icon: [

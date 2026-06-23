@@ -3,10 +3,69 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+type RateLimitInfo = {
+  count: number;
+  lastRequest: number;
+};
+
+// Global in-memory store for rate limiting (persists across hot invocations in serverless environments)
+const ipTracker = new Map<string, RateLimitInfo>();
+
+const MAX_REQUESTS_PER_HOUR = 3;
+const COOLDOWN_MS = 3 * 60 * 1000; // 3 minutes
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown-ip';
+    const now = Date.now();
+
+    if (ip !== 'unknown-ip') {
+      const tracker = ipTracker.get(ip);
+      if (tracker) {
+        // Cooldown check (3 minutes)
+        if (now - tracker.lastRequest < COOLDOWN_MS) {
+          const waitMinutes = Math.ceil((COOLDOWN_MS - (now - tracker.lastRequest)) / 1000 / 60);
+          return NextResponse.json({ error: `Por favor, aguarde ${waitMinutes} minuto(s) antes de enviar outra mensagem.` }, { status: 429 });
+        }
+
+        // Hourly limit check
+        if (now - tracker.lastRequest < ONE_HOUR_MS) {
+          if (tracker.count >= MAX_REQUESTS_PER_HOUR) {
+            return NextResponse.json({ error: 'Limite de mensagens excedido. Tente novamente em 1 hora.' }, { status: 429 });
+          }
+          tracker.count++;
+          tracker.lastRequest = now;
+          ipTracker.set(ip, tracker);
+        } else {
+          // Reset after an hour
+          ipTracker.set(ip, { count: 1, lastRequest: now });
+        }
+      } else {
+        ipTracker.set(ip, { count: 1, lastRequest: now });
+      }
+
+      // Cleanup memory
+      if (ipTracker.size > 1000) {
+        const oldestAllowed = now - ONE_HOUR_MS;
+        for (const [key, value] of ipTracker.entries()) {
+          if (value.lastRequest < oldestAllowed) {
+            ipTracker.delete(key);
+          }
+        }
+      }
+    }
+
     const body = await request.json()
-    const { name, email, message, turnstileToken } = body
+    const { name, email, message, turnstileToken, _honeypot } = body
+
+    // Honeypot check: If the hidden field is filled, it's a bot
+    if (_honeypot) {
+      return NextResponse.json(
+        { success: true, message: 'Mensagem recebida com sucesso!' }, // Fake success to fool bots
+        { status: 200 }
+      )
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json(

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, MotionConfig } from 'framer-motion'
 import { User } from 'lucide-react'
-import { Turnstile } from '@marsidev/react-turnstile'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 
 const skills = [
   { category: 'Linguagens', items: ['Node.js', 'Python', 'Rust', 'TypeScript', 'JavaScript', 'Go', 'C#', 'C++', 'PHP', 'Bash/Shell'] },
@@ -91,11 +91,13 @@ export default function Home() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: ''
+    message: '',
+    _honeypot: ''
   })
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [formMessage, setFormMessage] = useState('')
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileInstance>(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
   const [navProgress, setNavProgress] = useState(0)
@@ -419,17 +421,22 @@ export default function Home() {
       if (response.ok) {
         setFormStatus('success')
         setFormMessage('Mensagem enviada! Vou responder em breve.')
-        setFormData({ name: '', email: '', message: '' })
+        setFormData({ name: '', email: '', message: '', _honeypot: '' })
+        setTurnstileToken(null)
+        if (turnstileRef.current) turnstileRef.current.reset()
         
         if (typeof window !== 'undefined' && (window as any).va) {
           (window as any).va('track', 'Contact Form Submit')
         }
       } else {
-        throw new Error('Erro ao enviar')
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.error || 'Erro ao enviar')
       }
-    } catch (error) {
+    } catch (error: any) {
       setFormStatus('error')
-      setFormMessage('Erro ao enviar. Tente enviar direto para contato@amathyzin.com.br')
+      setFormMessage(error.message || 'Erro ao enviar. Tente enviar direto para contato@amathyzin.com.br')
+      setTurnstileToken(null)
+      if (turnstileRef.current) turnstileRef.current.reset()
     }
   }
 
@@ -997,6 +1004,7 @@ export default function Home() {
                   author: "@helena_ggplus",
                   role: "Study Hobby",
                   viaDiscord: true,
+                  viaVarejoCode: true,
                   projectImage: "/images/projects/StudyHobby.webp",
                   color: "bg-purple-500/20 text-purple-500"
                 },
@@ -1013,6 +1021,7 @@ export default function Home() {
                   author: "@myriam_whitte_07820",
                   role: "Myriam Designer Portfolio",
                   viaDiscord: true,
+                  viaVarejoCode: true,
                   projectImage: "/images/projects/myriam.webp",
                   color: "bg-rose-500/20 text-rose-500"
                 }
@@ -1052,6 +1061,15 @@ export default function Home() {
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
                               Discord
                             </span>
+                          )}
+                          {testimonial.viaVarejoCode && (
+                            <Link href="https://www.varejocode.com.br/" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-wider font-bold text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded flex items-center gap-1 shrink-0 transition-colors">
+                              <div className="relative w-3.5 h-3.5 overflow-hidden shrink-0">
+                                <Image src="/images/projects/varejoicon.webp" alt="VarejoCode" fill className="object-contain" />
+                              </div>
+                              VarejoCode
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-0.5 opacity-80"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </Link>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-1">{testimonial.role}</p>
@@ -1201,6 +1219,21 @@ export default function Home() {
                 />
               </div>
             </div>
+
+            {/* Honeypot field - visually hidden, but screen readers and bots see it */}
+            <div style={{ display: 'none' }} aria-hidden="true">
+              <label htmlFor="_honeypot">Leave this field blank</label>
+              <input
+                type="text"
+                id="_honeypot"
+                name="_honeypot"
+                value={formData._honeypot}
+                onChange={handleInputChange}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
             <div className="space-y-3 group">
                 <label htmlFor="message" className="block text-sm uppercase tracking-wider text-muted-foreground group-focus-within:text-foreground transition-colors">
                 Mensagem
@@ -1228,6 +1261,7 @@ export default function Home() {
             )}
             <div className="pt-4">
               <Turnstile 
+                ref={turnstileRef}
                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} 
                 onSuccess={(token) => setTurnstileToken(token)}
                 options={{ theme: 'dark' }}
@@ -1263,6 +1297,7 @@ export default function Home() {
               <Link 
                 href="mailto:contato@amathyzin.com.br?subject=Ol%C3%A1!%20Vi%20seu%20portfolio" 
                 className="text-xl md:text-2xl hover:text-accent transition-colors text-foreground"
+                aria-label="Enviar um e-mail para contato@amathyzin.com.br"
                 onClick={() => {
                   if (typeof window !== 'undefined' && (window as any).va) {
                     (window as any).va('track', 'Email Click')
@@ -1280,6 +1315,7 @@ export default function Home() {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-xl hover:text-accent transition-colors text-foreground"
+                  aria-label="Acessar meu perfil no GitHub"
                   onClick={() => {
                     if (typeof window !== 'undefined' && (window as any).va) {
                       (window as any).va('track', 'GitHub Click')
@@ -1293,6 +1329,7 @@ export default function Home() {
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-xl hover:text-accent transition-colors text-foreground"
+                  aria-label="Acessar meu perfil no LinkedIn"
                   onClick={() => {
                     if (typeof window !== 'undefined' && (window as any).va) {
                       (window as any).va('track', 'LinkedIn Click')
